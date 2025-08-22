@@ -20,7 +20,7 @@ You start the Python script, state your full request (e.g., "schedule a meeting 
 
 The system is divided into two main components:
 
-### **1\. Python Voice Client (app.py)**
+### **1\. Python Voice Client (main.py)**
 
 * Runs on your **local machine**.  
 * Uses SpeechRecognition for voice-to-text and pyttsx3 for text-to-speech.  
@@ -46,7 +46,7 @@ Before starting, make sure you have:
 * **Google Cloud Account**:  
   * Enable the **Google Calendar API**  
   * Enable the **Vertex AI API** (for Gemini)  
-  * Create appropriate API Keys or Service Account credentials.  
+  * Create mainropriate API Keys or Service Account credentials.  
 * **Email Account** (e.g., Gmail) for sending confirmations.
 
 ## **Setup Instructions**
@@ -70,13 +70,13 @@ Before starting, make sure you have:
 
         **Instructions:**
         1. give subject is "Meeting with HR".
-        2. The current date is {{ new Date().toISOString() }}. If the user mentions a date that has already passed this year (e.g., says "January 5th" when it's August), assume they mean for the next year.
+        2. The current date is ```{{ new Date().toISOString() }}```. If the user mentions a date that has already passed this year (e.g., says "January 5th" when it's August), assume they mean for the next year.
 
         **Output Format:**
         Respond ONLY with a valid JSON object containing these exact keys: "email", "date" (in YYYY-MM-DD format), "startTime" (in HH:mm 24-hour format), "endTime" (in HH:mm 24-hour format), and "subject" (as a string).
 
         **Text:**
-        {{$json.body}}
+        ```{{$json.body}}```
 
    **Node 3: Google Calendar**
 
@@ -84,22 +84,22 @@ Before starting, make sure you have:
 
    * **Authenticate** with your Google account.  
    * **Fields** (Note: these expressions parse the JSON *string* returned by the Gemini node):  
-     * **Title:** {{ JSON.parse($json.content.parts[0].text).subject }}  
-     * **Start Time:** {{ JSON.parse($json.content.parts[0].text).date }} {{ JSON.parse($json.content.parts[0].text).startTime }}  
-     * **End Time:** {{ JSON.parse($json.content.parts[0].text).date }} {{ JSON.parse($json.content.parts[0].text).endTime }}  
-     * **Attendees:** {{ JSON.parse($json.content.parts[0].text).email }}
+     * **Title:** ```{{ JSON.parse($json.content.parts[0].text).subject }} ``` 
+     * **Start Time:** ```{{ JSON.parse($json.content.parts[0].text).date }} {{ JSON.parse($json.content.parts[0].text).startTime }} ``` 
+     * **End Time:** ```{{ JSON.parse($json.content.parts[0].text).date }} {{ JSON.parse($json.content.parts[0].text).endTime }} ``` 
+     * **Attendees:** ```{{ JSON.parse($json.content.parts[0].text).email }}```
 
    **Node 4: Send Email**
 
    * #### **Authenticate with your email provider.**
 
-   * **To:** {{ $json.attendees[0].email }}  
-   * **Subject:** {{ $json.summary }}  
+   * **To:** ```{{ $json.attendees[0].email }}  ```
+   * **Subject:** ```{{ $json.summary }} ``` 
    * **HTML Body:** Use a confirmation email template.
 
    **Node 5: Respond to Webhook**
 
-   * #### **Response Body:**      **{**        **"message": "All done\! I have scheduled the meeting and sent the confirmation email."**      **}** 
+   * #### **Response Body:**   ```   **{**        **"message": "All done\! I have scheduled the meeting and sent the confirmation email."**      **}** ```
 
 3. **Connect the Nodes**:  
    Webhook → Gemini API → Google Calendar → Send Email → Respond to Webhook
@@ -108,31 +108,31 @@ Before starting, make sure you have:
 
 ### **2\. Python Client Setup**
 
-1. **Save the script** as app.py.  
-2. **Create a requirements.txt file** in the same directory as app.py and add the following content:  
+1. **Save the script** as main.py.  
+2. **Create a requirements.txt file** in the same directory as main.py and add the following content:  
    SpeechRecognition  
    PyAudio  
    pyttsx3  
    requests
 
 3. **Create & Activate a Virtual Environment**:  
-   python3 \-m venv venv
+   python \-m venv venv
 
    **Activate it:**  
    * macOS/Linux: source venv/bin/activate  
    * Windows: .\\venv\\Scripts\\activate  
 4. **Install Dependencies**:  
    pip install \-r requirements.txt  
-   **Note:** If PyAudio fails on Debian/Ubuntu, run: sudo apt-get install portaudio19-dev python3-pyaudio  
+   **Note:** If PyAudio fails on Debian/Ubuntu, run: sudo apt-get install portaudio19-dev python-pyaudio  
 5. **Configure the Script**:  
-   * Open app.py.  
+   * Open main.py.  
    * Paste the **Production URL** from your n8n Webhook into the N8N\_WEBHOOK\_URL variable.
 
 ## **Usage**
 
 1. **Start the n8n workflow**.  
 2. **Run the Python script**:  
-   python3 app.py
+   python main.py
 
 3. The assistant will greet you.  
 4. State your full command in one sentence, for example:"Schedule a meeting with ajoy.das@example.com tomorrow from 4 PM to 5 PM about the project review."  
