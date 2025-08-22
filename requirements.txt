@@ -1,0 +1,6 @@
+requests
+SpeechRecognition
+pyttsx3
+PyAudio
+
+# sudo apt-get update && sudo apt-get install portaudio19-dev python3-dev
