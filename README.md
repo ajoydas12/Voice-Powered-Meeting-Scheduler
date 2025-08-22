@@ -99,7 +99,7 @@ Before starting, make sure you have:
 
    **Node 5: Respond to Webhook**
 
-   * #### **Response Body:**   ```   **{**        **"message": "All done\! I have scheduled the meeting and sent the confirmation email."**      **}** ```
+   * #### **Response Body:**   **{**        **"message": "All done\! I have scheduled the meeting and sent the confirmation email."**      **}**
 
 3. **Connect the Nodes**:  
    Webhook → Gemini API → Google Calendar → Send Email → Respond to Webhook
